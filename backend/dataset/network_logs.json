@@ -1,0 +1,6 @@
+[
+ {"source":"EmployeePC","destination":"Server1"},
+ {"source":"Server1","destination":"Database"},
+ {"source":"InternPC","destination":"Server1"},
+ {"source":"AdminPC","destination":"Database"}
+]
