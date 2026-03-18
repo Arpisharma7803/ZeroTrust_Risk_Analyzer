@@ -9,28 +9,18 @@ from datetime import datetime
 
 router = APIRouter()
 
+
 @router.get("/network-graph")
 def network_graph(db: Session = Depends(get_db)):
     graph = get_graph()
-    nodes = []
-    for node in graph.nodes():
-        degree = graph.degree(node)
-        if degree <= 1:
-            node_type = "endpoint"
-        elif degree <= 3:
-            node_type = "server"
-        else:
-            node_type = "database"
-        nodes.append({
-            "id": node,
-            "type": node_type,
-            "risk": min(degree * 20, 99)
-        })
     return {
-        "nodes": nodes,
-        "edges": [{"source": u, "target": v} 
-                  for u, v in graph.edges()]
+        "nodes": list(graph.nodes()),
+        "edges": [
+            {"source": u, "target": v}
+            for u, v in graph.edges()
+        ]
     }
+
 
 @router.get("/lateral-movement")
 def lateral(db: Session = Depends(get_db)):
@@ -46,6 +36,7 @@ def lateral(db: Session = Depends(get_db)):
     db.commit()
     return {"paths": paths}
 
+
 @router.get("/risk-analysis")
 def risk(db: Session = Depends(get_db)):
     nodes = analyze_risk()
@@ -59,6 +50,7 @@ def risk(db: Session = Depends(get_db)):
         db.add(log)
     db.commit()
     return {"nodes": nodes}
+
 
 @router.get("/history/risk")
 def risk_history(db: Session = Depends(get_db)):
@@ -74,12 +66,14 @@ def risk_history(db: Session = Depends(get_db)):
         } for l in logs
     ]}
 
+
 @router.get("/alerts")
 def get_alerts(db: Session = Depends(get_db)):
     alerts = db.query(Alert).order_by(
         Alert.created_at.desc()
     ).all()
     return {"alerts": alerts}
+
 
 @router.put("/alerts/{alert_id}/resolve")
 def resolve_alert(alert_id: int, db: Session = Depends(get_db)):
