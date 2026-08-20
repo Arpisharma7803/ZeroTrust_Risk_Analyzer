@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 
 // ─── CONFIG ───────────────────────────────────────────────────────────────────
-const BASE_URL = "http://127.0.0.1:8000";
+const BASE_URL = "https://zerotrust-risk-analyzer.onrender.com";
 const AUTO_REFRESH_INTERVAL = 30000;
 
 // ─── MITRE ATT&CK TAGS ────────────────────────────────────────────────────────
