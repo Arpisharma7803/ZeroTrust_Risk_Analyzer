@@ -1,0 +1,5 @@
+﻿__pycache__/
+*.pyc
+zerotrust.db
+zerotrust.db-journal
+.env

@@ -1,21 +1,22 @@
-version: '3.8'
-
 services:
   backend:
     build: ./backend
     ports:
       - "8000:8000"
-    volumes:
-      - ./backend:/app
-      - ./backend/zerotrust.db:/app/zerotrust.db
-    environment:
-      - PYTHONUNBUFFERED=1
+    networks:
+      - zt-network
 
   frontend:
     build: ./frontend/dashboard
     ports:
-      - "3000:3000"
+      - "3000:80"
     depends_on:
       - backend
     environment:
-      - REACT_APP_API_URL=http://localhost:8000
+      - REACT_APP_API_URL=http://backend:8000
+    networks:
+      - zt-network
+
+networks:
+  zt-network:
+    driver: bridge
