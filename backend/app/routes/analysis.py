@@ -13,8 +13,22 @@ router = APIRouter()
 @router.get("/network-graph")
 def network_graph(db: Session = Depends(get_db)):
     graph = get_graph()
+
+    # Reuse the same risk engine that powers /risk-analysis, so both
+    # endpoints report consistent scores for the same nodes.
+    risk_nodes = analyze_risk()
+    risk_lookup = {n["id"]: n["score"] for n in risk_nodes}
+
     return {
-        "nodes": list(graph.nodes()),
+        "nodes": [
+            {
+                "id": node_id,
+                # Fall back to 50 only if a node genuinely has no risk
+                # score computed for it (shouldn't normally happen).
+                "risk": risk_lookup.get(node_id, 50),
+            }
+            for node_id in graph.nodes()
+        ],
         "edges": [
             {"source": u, "target": v}
             for u, v in graph.edges()
